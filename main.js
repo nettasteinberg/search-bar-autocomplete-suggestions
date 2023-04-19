@@ -22,25 +22,18 @@ searchDiv.append(searchButton, input);
 mainDiv.append(searchDiv, resultsDiv)
 body.append(mainDiv);
 
-let results = {};
+let results = new Set();
 
 searchButton.addEventListener("click", function(event) {
     if (!input.value) {
         return;
     }
-    // debugger
     sessionStorage.setItem(input.value, "");
     input.value = "";
-    resultsDiv.innerHTML = "";
     input.focus();
 })
 
 input.addEventListener("keyup", function(event) {
-    debugger
-    // if (!input.value) {
-    //     resultsDiv.innerHTML = "";
-    //     return;
-    // }
 
     // If the user presses the "Enter" key on the keyboard
     if (event.key === "Enter") {
@@ -51,49 +44,33 @@ input.addEventListener("keyup", function(event) {
         return;
     }
 
-    // if ((event.key === "Backspace" || event.key === "Delete") && !input.value) {
-    //     resultsDiv.innerHTML = "";
-    //     return;
-    // }
-
-    results = {};
+    results = new Set();
     const keys = Object.keys(sessionStorage);
     const inputCurrentValue = input.value
-    // keys.forEach(key => function(key) {
-    //     debugger
-    //     if (inputCurrentValue.length > key) {}
-    //     if (key.substring(0, inputCurrentValue.length) === inputCurrentValue) {
-    //         console.log("match!");
-    //         results.append(key);
-    //     }
-    // })
     for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         if (inputCurrentValue.length > key) {
             continue;
         } else if (key.substring(0, inputCurrentValue.length) === inputCurrentValue){
-            // if (key === "IsThisFirstTime_Log_From_LiveServer")
-            results[key] = key;
+            results.add(key);
         }
     }
     displayResults();
 })
 
 const displayResults = function() {
-    // debugger
     resultsDiv.innerHTML = "";
-    if (results.length === 0) {
+    if (results.size === 0) {
         const div = document.createElement("div");
         div.classList.add("resultDiv", "noResultColor");
         div.innerText = "No Results found!";
         resultsDiv.append(div);
     } else {
-        for (const result in results) {
-            // debugger
+        results.forEach(function(result) {
             const div = document.createElement("div");
             div.classList.add("resultDiv", "resultColor");
             div.innerText = result;
             resultsDiv.append(div);
-        }
+        });
     }
 }
